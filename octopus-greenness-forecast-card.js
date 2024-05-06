@@ -15,108 +15,20 @@ class OctopusGreennessForecastCard extends HTMLElement {
                 spacing: 0px;
             }
             table.sub_table {
-                border-collapse: seperate;
+                border-collapse: separate;
                 border-spacing: 0px 2px;
             }
             table.main {
                 padding: 0px;
             }
-            td.time_highlight {
-                font-weight: bold;
-                color: white;
-            }
-            td.current {
-                position: relative;
-            }
-            td.current:before{
-                content: "";
-                position: absolute;
-                top: 0;
-                right: 0;
-                width: 0;
-                height: 0;
-                display: block;
-                border-top: calc(var(--paper-font-body1_-_line-height)*0.65) solid transparent;
-                border-bottom: calc(var(--paper-font-body1_-_line-height)*0.65) solid transparent;
-
-                border-right: 10px solid;
-            }
-            thead th {
-                text-align: left;
-                padding: 0px;
-            }
-            td {
+            td, th {
                 vertical-align: top;
                 padding: 2px;
                 spacing: 0px;
             }
-            tr.rate_row{
-                text-align:center;
-                width:80px;
-            }
-            td.time {
-                text-align:center;
-                vertical-align: middle;
-            }
-            td.time_red{
-                border-bottom: 1px solid Tomato;
-            }
-            td.time_orange{
-                border-bottom: 1px solid orange;
-            }
-            td.time_green{
-                border-bottom: 1px solid MediumSeaGreen;
-            }
-            td.time_lightgreen {
-                border-bottom: 1px solid ForestGreen;
-            }
-            td.time_blue{
-                border-bottom: 1px solid #391CD9;
-            }
-            td.time_cheapest{
-                border-bottom: 1px solid LightGreen;
-            }
-            td.time_cheapestblue{
-                border-bottom: 1px solid LightBlue;
-            }
-            td.rate {
-                color:white;
-                text-align:center;
-                vertical-align: middle;
-                width:80px;
-
-                border-top-right-radius:15px;
-                border-bottom-right-radius:15px;
-            }
-            td.red {
-                border: 2px solid Tomato;
-                background-color: Tomato;
-            }
-            td.orange {
-                border: 2px solid orange;
-                background-color: orange;
-            }
-            td.green {
-                border: 2px solid MediumSeaGreen;
-                background-color: MediumSeaGreen;
-            }
-            td.lightgreen {
-                border: 2px solid ForestGreen;
-                background-color: ForestGreen;
-            }
-            td.blue {
-                border: 2px solid #391CD9;
-                background-color: #391CD9;
-            }
-            td.cheapest {
-                color: black;
-                border: 2px solid LightGreen;
-                background-color: LightGreen;
-            }
-            td.cheapestblue {
-                color: black;
-                border: 2px solid LightBlue;
-                background-color: LightBlue;
+            .highlighted {
+                font-weight: bold;
+                background-color: #FFFFAA; // Light yellow for highlighted times
             }
             `;
             card.appendChild(style);
@@ -126,7 +38,6 @@ class OctopusGreennessForecastCard extends HTMLElement {
 
         // Initialise the lastRefreshTimestamp
         if (!this.lastRefreshTimestamp) {
-            // Store the timestamp of the last refresh
             this.lastRefreshTimestamp = 0;
         }
 
@@ -134,325 +45,76 @@ class OctopusGreennessForecastCard extends HTMLElement {
         const currentTime = Date.now();
         const cardRefreshIntervalSecondsInMilliseconds = config.cardRefreshIntervalSeconds * 1000;
         if (!(currentTime - this.lastRefreshTimestamp >= cardRefreshIntervalSecondsInMilliseconds)) {
-            return
+            return;
         }
         this.lastRefreshTimestamp = currentTime;
 
-        const colours_import = ['lightgreen', 'green', 'orange', 'red', 'blue', 'cheapest', 'cheapestblue'];
-        const colours_export = ['red', 'green', 'orange', 'green'];
-        const currentEntityId = config.currentEntity;
-        const highlightedEntityId = config.highlightedEntity;
-        const pastEntityId = config.pastEntity;
-        // Create an empty array to store the parsed attributes
-        const allSlotsTargetTimes = [];
-        const targetTimesEntities = config.targetTimesEntities && Object.keys(config.targetTimesEntities) || [];
-        // Iterate through each entity in targetTimesEntities
-        for (const entityId of targetTimesEntities) {
-            const entityTimesState = hass.states[entityId];
-            const entityExtraData = config.targetTimesEntities[entityId] || [];
-            const backgroundColour = entityExtraData.backgroundColour || "Navy";
-            const timePrefix = entityExtraData.prefix || "";
-            // Access the attributes of the current entity
-            const entityAttributes = entityTimesState ? this.reverseObject(entityTimesState.attributes) : {};
-            // Get the target_times array, handling potential undefined cases
-            const targetTimes = entityAttributes.target_times || [];
-            // Iterate through each target time and push it individually
-            for (const targetTime of targetTimes) {
-                allSlotsTargetTimes.push({
-                    start: targetTime.start,
-                    end: targetTime.end,
-                    color: backgroundColour,
-                    timePrefix: timePrefix,
-                });
-            }
-        }
+        // Get the forecast data
+        const entityId = config.currentEntity;
+        const currentstate = hass.states[entityId];
+        const forecastData = currentstate.attributes.forecast;
 
-        const lowlimit = config.lowlimit;
-        var mediumlimit = config.mediumlimit;
-        var highlimit = config.highlimit;
-        const unitstr = config.unitstr;
-        const roundUnits = config.roundUnits;
-        const showpast = config.showpast;
-        const showday = config.showday;
-        const hour12 = config.hour12;
-        const cheapest = config.cheapest;
-        const combinerate = config.combinerate;
-        const multiplier = config.multiplier
-        const rateListLimit = config.rateListLimit
-        var colours = (config.exportrates ? colours_export : colours_import);
-        var rates_totalnumber = 0;
-        var combinedForecast = [];
+        // Construct the table content
+        let tables = "<table class='main'><tbody>";
+        forecastData.forEach(entry => {
+            const startTime = new Date(entry.start);
+            const endTime = new Date(entry.end);
+            const greennessIndex = entry.greenness_index;
+            const greennessScore = entry.greenness_score;
+            const isHighlighted = entry.is_highlighted;
+            const rowClass = isHighlighted ? 'highlighted' : '';
 
-        // Grab the rates which are stored as an attribute of the sensor
-        const currentstate = hass.states[currentEntityId];
-        const highlightedstate = hass.states[highlightedEntityId];
+            // Formatting the date and time to include day and date
+            const dayDateFormatOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+            const timeFormatOptions = { hour12: config.hour12, hour: '2-digit', minute: '2-digit' };
+            const timeDisplay = `${startTime.toLocaleDateString(undefined, dayDateFormatOptions)} ${startTime.toLocaleTimeString([], timeFormatOptions)} - ${endTime.toLocaleTimeString([], timeFormatOptions)}`;
 
-        // Get Limit entity values
-        const limitEntity = config.limitEntity;
-        const limitEntityState = hass.states[limitEntity];
-        const limitHighMult = config.highLimitMultiplier;
-        const limitMedMult = config.mediumLimitMultiplier;
-
-        if (!(limitEntity == null)) {
-            const limitAve = parseFloat(limitEntityState.state);
-            mediumlimit = limitAve * limitMedMult;
-            highlimit = limitAve * limitHighMult;
-        };
-
-        // Combine the data sources
-        // if (typeof (paststate) != 'undefined' && paststate != null) {
-        //     const pastattributes = this.reverseObject(paststate.attributes);
-        //     var ratesPast = pastattributes.rates;
-        //
-        //     ratesPast.forEach(function (key) {
-        //         combinedForecast.push(key);
-        //         rates_totalnumber++;
-        //     });
-        // }
-
-        if (typeof (currentstate) != 'undefined' && currentstate != null) {
-            const currentattributes = this.reverseObject(currentstate.attributes);
-            var forecastCurrent = currentattributes.forecast;
-
-            forecastCurrent.forEach(function (key) {
-                combinedForecast.push(key);
-                forecast_totalnumber++;
-            });
-        }
-        // Check to see if the 'rates' attribute exists on the chosen entity. If not, either the wrong entity
-        // was chosen or there's something wrong with the integration.
-        // The rates attribute also appears to be missing after a restart for a while - please see:
-        // https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/issues/135
-        if (!ratesCurrent) {
-            throw new Error("There are no rates assigned to that entity! Please check integration or chosen entity");
-        }
-
-        if (typeof (futurestate) != 'undefined' && futurestate != null) {
-            const futureattributes = this.reverseObject(futurestate.attributes);
-            var ratesFuture = futureattributes.rates;
-
-            ratesFuture.forEach(function (key) {
-                combinedForecast.push(key);
-                rates_totalnumber++;
-            });
-        }
-
-        // This is critical to breaking down the columns properly. For now, there's now
-        // two loops doing the same thing which is not ideal.
-        // TODO: there should be one clear data process loop and one rendering loop? Or a function?
-        var rates_list_length = 0;
-        var cheapest_rate = 5000;
-        var previous_rate = 0;
-
-        var rates_currentNumber = 0;
-        var previous_rates_day = "";
-        var rates_processingRow = 0;
-        var filteredRates = [];
-
-// greenness_index
-// greenness_score
-// is_highlighted
-
-        // filter out rates to display
-        combinedForecast.forEach(function (key) {
-            const date_milli = Date.parse(key.start);
-            var date = new Date(date_milli);
-            const lang = navigator.language || navigator.languages[0];
-            var current_rates_day = date.toLocaleDateString(lang, { weekday: 'short' });
-            rates_processingRow++;
-            // var ratesToEvaluate = key.value_inc_vat * multiplier;
-
-            if ((showpast || (date - Date.parse(new Date()) > -1800000)) && (rateListLimit == 0 || rates_list_length < rateListLimit)) {
-                rates_currentNumber++;
-
-                // Find the cheapest rate that hasn't past yet
-                if ((ratesToEvaluate < cheapest_rate) && (date - Date.parse(new Date()) > -1800000)) cheapest_rate = ratesToEvaluate;
-
-                // If we don't want to combine same values rates then just push them to new display array
-                if (!combinerate) {
-                    filteredRates.push(key);
-                    rates_list_length++;
-                }
-
-                if (combinerate &&
-                    (
-                        (rates_currentNumber == 1)
-                        || (current_rates_day != previous_rates_day)
-                        || (previous_rate != ratesToEvaluate)
-                    )
-                ) {
-                    filteredRates.push(key);
-                    rates_list_length++;
-                }
-                previous_rate = ratesToEvaluate;
-                previous_rates_day = current_rates_day;
-            }
+            tables += `<tr class="${rowClass}">
+                <td>${timeDisplay}</td>
+                <td>${greennessScore}</td>
+                <td>${greennessIndex}</td>
+            </tr>`;
         });
+        tables += "</tbody></table>";
 
-        const rows_per_col = Math.ceil(rates_list_length / config.cols);
-
-        var tables = "";
-        tables = tables.concat("<td><table class='sub_table'><tbody>");
-        var table = ""
-        var x = 1;
-
-        filteredRates.forEach(function (key) {
-            const date_milli = Date.parse(key.start);
-            var date = new Date(date_milli);
-            const lang = navigator.language || navigator.languages[0];
-            var options = { hourCycle: 'h23', hour12: hour12, hour: '2-digit', minute: '2-digit' };
-            // The time formatted in the user's Locale
-            var time_locale = date.toLocaleTimeString(lang, options);
-            // If the showday config option is set, include the shortened weekday name in the user's Locale
-            var date_locale = (showday ? date.toLocaleDateString(lang, { weekday: 'short' }) + ' ' : '');
-
-            var colour = colours[1];  // Default to 'green' (index 1) (below low limit above 0)
-            var isTargetTime = false;
-            var targetTimeBackgroundColor = "";
-            var targetTimePrefix = "";
-            // Check if the current time row corresponds to a target time
-            allSlotsTargetTimes.forEach(function (targetTime) {
-                const startTime = new Date(targetTime.start);
-                const endTime = new Date(targetTime.end);
-                if (date >= startTime && date < endTime) {
-                    isTargetTime = true;
-                    targetTimeBackgroundColor = "' style='background-color: " + targetTime.color + ";";
-                    targetTimePrefix = targetTime.timePrefix ? targetTimePrefix + targetTime.timePrefix : targetTimePrefix;
-                }
-            });
-            // Add the extra space at the end of the prefix if it's not empty
-            targetTimePrefix = targetTimePrefix ? targetTimePrefix + " " : targetTimePrefix;
-            var isCurrentTime = false;
-            if ((date - Date.parse(new Date()) > -1800000) && (date < new Date())) {
-                if (showpast) {
-                    isCurrentTime = true;
-                };
-            };
-
-
-            var valueToDisplay = key.value_inc_vat * multiplier;
-            // Apply bold styling if the current time is a target time
-            var boldStyle = isCurrentTime ? "current " : "";
-            boldStyle = isTargetTime ? boldStyle + "time_highlight" : boldStyle + "";
-            if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate > 0)) colour = colours[5];
-            else if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate <= 0)) colour = colours[6];
-            else if (valueToDisplay > highlimit) colour = colours[3]; //red (import) / green (export)
-            else if (valueToDisplay > mediumlimit) colour = colours[2]; // orange (import) / orange (export)
-            else if (valueToDisplay > lowlimit) colour = colours[0]; // lightgreen  (import) / red (export)
-            else if (valueToDisplay <= 0) colour = colours[4]; // below 0 - blue (import/export)
-
-            if (showpast || (date - Date.parse(new Date()) > -1800000)) {
-                table = table.concat("<tr class='rate_row'><td class='time " + boldStyle + " " + "time_" + colour + targetTimeBackgroundColor + "'>" + targetTimePrefix + date_locale + time_locale +
-                    "</td><td class='rate " + colour + "'>" + valueToDisplay.toFixed(roundUnits) + unitstr + "</td></tr>");
-
-                if (x % rows_per_col == 0) {
-                    tables = tables.concat(table);
-                    table = "";
-                    if (rates_list_length != x) {
-                        tables = tables.concat("</tbody></table></td>");
-                        tables = tables.concat("<td><table class='sub_table'><tbody>");
-                    }
-                };
-                x++;
-            }
-        });
-        tables = tables.concat(table);
-        tables = tables.concat("</tbody></table></td>");
-
-        this.content.innerHTML = `
-        <table class="main">
-            <tr>
-                ${tables}
-            </tr>
-        </table>
-        `;
-    }
-
-    reverseObject(object) {
-        var newObject = {};
-        var keys = [];
-
-        for (var key in object) {
-            keys.push(key);
-        }
-
-        for (var i = keys.length - 1; i >= 0; i--) {
-            var value = object[keys[i]];
-            newObject[keys[i]] = value;
-        }
-
-        return newObject;
+        // Update the card content
+        this.content.innerHTML = tables;
     }
 
     setConfig(config) {
         if (!config.currentEntity) {
-            throw new Error('You need to define an entity');
+            throw new Error('You need to define an entity for greenness data.');
         }
-
+        
+        // Set default configuration values
         const defaultConfig = {
-            targetTimesEntities: null,
-            // Controls how many columns the rates split in to
-            cols: 1,
-            // Show rates that already happened in the card
-            showpast: false,
-            // Show the day of the week with the time
-            showday: false,
-            // Use 12 or 24 hour time
-            hour12: true,
-            // Controls the title of the card
-            title: 'Greenness Rates',
-            // Colour controls:
-            // If the price is above highlimit, the row is marked red.
-            // If the price is above mediumlimit, the row is marked orange.
-            // If the price is above lowlimit, the row is marked dark green.
-            // If the price is below lowlimit, the row is marked green.
-            // If the price is below 0, the row is marked blue.
-            lowlimit: 5,
-            mediumlimit: 20,
-            highlimit: 30,
-            // Entity to use for dynamic limits, above are ignored if limitEntity is set.
-            limitEntity: null,
-            highLimitMultiplier: 1.1,
-            mediumLimitMultiplier: 0.8,
-            // Controls the rounding of the units of the rate
-            roundUnits: 2,
-            // The unit string to show if units are shown after each rate
-            unitstr: 'p/kWh',
-            // Make the colouring happen in reverse, for export rates
-            exportrates: false,
-            // Higlight the cheapest rate
-            cheapest: false,
-            // Combine equal rates
-            combinerate: false,
-            // multiple rate values for pence (100) or pounds (1)
-            multiplier: 100,
-            // Limit display to next X rows
-            rateListLimit: 0,
-            // How often should the card refresh in seconds
-            cardRefreshIntervalSeconds: 60
+            title: 'Greenness Forecast',              // Default title of the card
+            hour12: true,                             // Default to 12-hour time format
+            cardRefreshIntervalSeconds: 60,           // Default refresh rate of 60 seconds
+            showPast: false,                          // Default setting to not show past data
+            cols: 1,                                  // Default number of columns
+            highlightCheapest: false,                 // Default setting for highlighting the cheapest rate
+            colorCoding: true,                        // Default setting to enable color coding
         };
 
-        const cardConfig = {
+        // Merge user-defined configurations with the default configurations
+        this._config = {
             ...defaultConfig,
-            ...config,
+            ...config
         };
-
-        this._config = cardConfig;
     }
 
-    // The height of your card. Home Assistant uses this to automatically
-    // distribute all cards over the available columns.
     getCardSize() {
-        return 3;
+        return 3;  // Adjust size as needed for your layout
     }
 }
 
 customElements.define('octopus-greenness-forecast-card', OctopusGreennessForecastCard);
-// Configure the preview in the Lovelace card picker
+
 window.customCards = window.customCards || [];
 window.customCards.push({
     type: 'octopus-greenness-forecast-card',
     name: 'Octopus Greenness Forecast Card',
-    preview: false,
-    description: 'This card displays the greenness forecast for Octopus Energy',
+    preview: false,  // Set to true to enable preview in the Lovelace card picker
+    description: 'This card displays the greenness forecast for Octopus Energy.'
 });
