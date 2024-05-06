@@ -1,4 +1,4 @@
-class OctopusEnergyRatesCard extends HTMLElement {
+class OctopusGreennessForecastCard extends HTMLElement {
     set hass(hass) {
         const config = this._config;
         if (!this.content) {
@@ -27,14 +27,14 @@ class OctopusEnergyRatesCard extends HTMLElement {
             }
             td.current {
                 position: relative;
-            }    
+            }
             td.current:before{
                 content: "";
                 position: absolute;
                 top: 0;
                 right: 0;
-                width: 0; 
-                height: 0; 
+                width: 0;
+                height: 0;
                 display: block;
                 border-top: calc(var(--paper-font-body1_-_line-height)*0.65) solid transparent;
                 border-bottom: calc(var(--paper-font-body1_-_line-height)*0.65) solid transparent;
@@ -141,7 +141,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const colours_import = ['lightgreen', 'green', 'orange', 'red', 'blue', 'cheapest', 'cheapestblue'];
         const colours_export = ['red', 'green', 'orange', 'green'];
         const currentEntityId = config.currentEntity;
-        const futureEntityId = config.futureEntity;
+        const highlightedEntityId = config.highlightedEntity;
         const pastEntityId = config.pastEntity;
         // Create an empty array to store the parsed attributes
         const allSlotsTargetTimes = [];
@@ -181,12 +181,11 @@ class OctopusEnergyRatesCard extends HTMLElement {
         const rateListLimit = config.rateListLimit
         var colours = (config.exportrates ? colours_export : colours_import);
         var rates_totalnumber = 0;
-        var combinedRates = [];
+        var combinedForecast = [];
 
         // Grab the rates which are stored as an attribute of the sensor
-        const paststate = hass.states[pastEntityId];
         const currentstate = hass.states[currentEntityId];
-        const futurestate = hass.states[futureEntityId];
+        const highlightedstate = hass.states[highlightedEntityId];
 
         // Get Limit entity values
         const limitEntity = config.limitEntity;
@@ -201,23 +200,23 @@ class OctopusEnergyRatesCard extends HTMLElement {
         };
 
         // Combine the data sources
-        if (typeof (paststate) != 'undefined' && paststate != null) {
-            const pastattributes = this.reverseObject(paststate.attributes);
-            var ratesPast = pastattributes.rates;
-
-            ratesPast.forEach(function (key) {
-                combinedRates.push(key);
-                rates_totalnumber++;
-            });
-        }
+        // if (typeof (paststate) != 'undefined' && paststate != null) {
+        //     const pastattributes = this.reverseObject(paststate.attributes);
+        //     var ratesPast = pastattributes.rates;
+        //
+        //     ratesPast.forEach(function (key) {
+        //         combinedForecast.push(key);
+        //         rates_totalnumber++;
+        //     });
+        // }
 
         if (typeof (currentstate) != 'undefined' && currentstate != null) {
             const currentattributes = this.reverseObject(currentstate.attributes);
-            var ratesCurrent = currentattributes.rates;
+            var forecastCurrent = currentattributes.forecast;
 
-            ratesCurrent.forEach(function (key) {
-                combinedRates.push(key);
-                rates_totalnumber++;
+            forecastCurrent.forEach(function (key) {
+                combinedForecast.push(key);
+                forecast_totalnumber++;
             });
         }
         // Check to see if the 'rates' attribute exists on the chosen entity. If not, either the wrong entity
@@ -233,7 +232,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             var ratesFuture = futureattributes.rates;
 
             ratesFuture.forEach(function (key) {
-                combinedRates.push(key);
+                combinedForecast.push(key);
                 rates_totalnumber++;
             });
         }
@@ -250,14 +249,18 @@ class OctopusEnergyRatesCard extends HTMLElement {
         var rates_processingRow = 0;
         var filteredRates = [];
 
+// greenness_index
+// greenness_score
+// is_highlighted
+
         // filter out rates to display
-        combinedRates.forEach(function (key) {
+        combinedForecast.forEach(function (key) {
             const date_milli = Date.parse(key.start);
             var date = new Date(date_milli);
             const lang = navigator.language || navigator.languages[0];
             var current_rates_day = date.toLocaleDateString(lang, { weekday: 'short' });
             rates_processingRow++;
-            var ratesToEvaluate = key.value_inc_vat * multiplier;
+            // var ratesToEvaluate = key.value_inc_vat * multiplier;
 
             if ((showpast || (date - Date.parse(new Date()) > -1800000)) && (rateListLimit == 0 || rates_list_length < rateListLimit)) {
                 rates_currentNumber++;
@@ -397,7 +400,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             // Use 12 or 24 hour time
             hour12: true,
             // Controls the title of the card
-            title: 'Agile Rates',
+            title: 'Greenness Rates',
             // Colour controls:
             // If the price is above highlimit, the row is marked red.
             // If the price is above mediumlimit, the row is marked orange.
@@ -407,7 +410,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             lowlimit: 5,
             mediumlimit: 20,
             highlimit: 30,
-            // Entity to use for dynamic limits, above are ignored if limitEntity is set. 
+            // Entity to use for dynamic limits, above are ignored if limitEntity is set.
             limitEntity: null,
             highLimitMultiplier: 1.1,
             mediumLimitMultiplier: 0.8,
@@ -444,12 +447,12 @@ class OctopusEnergyRatesCard extends HTMLElement {
     }
 }
 
-customElements.define('octopus-energy-rates-card', OctopusEnergyRatesCard);
+customElements.define('octopus-greenness-forecast-card', OctopusGreennessForecastCard);
 // Configure the preview in the Lovelace card picker
 window.customCards = window.customCards || [];
 window.customCards.push({
-    type: 'octopus-energy-rates-card',
-    name: 'Octopus Energy Rates Card',
+    type: 'octopus-greenness-forecast-card',
+    name: 'Octopus Greenness Forecast Card',
     preview: false,
-    description: 'This card displays the energy rates for Octopus Energy',
+    description: 'This card displays the greenness forecast for Octopus Energy',
 });
