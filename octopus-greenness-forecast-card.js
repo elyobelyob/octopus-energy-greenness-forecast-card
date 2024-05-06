@@ -13,28 +13,117 @@ class OctopusGreennessForecastCard extends HTMLElement {
                 width: 100%;
                 padding: 0px;
                 spacing: 0px;
-                border-collapse: collapse; /* Ensures that table borders are joined together */
             }
-            td, th {
-                vertical-align: middle;
+            table.sub_table {
+                border-collapse: seperate;
+                border-spacing: 0px 2px;
+            }
+            table.main {
+                padding: 0px;
+            }
+            td.time_highlight {
+                font-weight: bold;
+                color: white;
+            }
+            td.current {
+                position: relative;
+            }    
+            td.current:before{
+                content: "";
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 0; 
+                height: 0; 
+                display: block;
+                border-top: calc(var(--paper-font-body1_-_line-height)*0.65) solid transparent;
+                border-bottom: calc(var(--paper-font-body1_-_line-height)*0.65) solid transparent;
+
+                border-right: 10px solid;
+            }
+            thead th {
+                text-align: left;
+                padding: 0px;
+            }
+            td {
+                vertical-align: top;
                 padding: 2px;
-                text-align: center; /* Centers the text horizontally */
-                color: white; /* Sets text color to white */
-                font-weight: bold; /* Makes the text bold */
+                spacing: 0px;
             }
-            .date-time {
-                background-color: #000000; /* Black background for date */
+            tr.rate_row{
+                text-align:center;
+                width:80px;
             }
-            td:last-child {
-                border-top-right-radius: 15px;
-                border-bottom-right-radius: 15px;
+            td.time {
+                text-align:center;
+                vertical-align: middle;
+            }
+            td.time_red{
+                border-bottom: 1px solid Tomato;
+            }
+            td.time_orange{
+                border-bottom: 1px solid orange;
+            }
+            td.time_green{
+                border-bottom: 1px solid MediumSeaGreen;
+            }
+            td.time_lightgreen {
+                border-bottom: 1px solid ForestGreen;
+            }
+            td.time_blue{
+                border-bottom: 1px solid #391CD9;
+            }
+            td.time_cheapest{
+                border-bottom: 1px solid LightGreen;
+            }
+            td.time_cheapestblue{
+                border-bottom: 1px solid LightBlue;
+            }
+            td.rate {
+                color:white;
+                text-align:center;
+                vertical-align: middle;
+                width:80px;
+
+                border-top-right-radius:15px;
+                border-bottom-right-radius:15px;
+            }
+            td.red {
+                border: 2px solid Tomato;
+                background-color: Tomato;
+            }
+            td.orange {
+                border: 2px solid orange;
+                background-color: orange;
+            }
+            td.green {
+                border: 2px solid MediumSeaGreen;
+                background-color: MediumSeaGreen;
+            }
+            td.lightgreen {
+                border: 2px solid ForestGreen;
+                background-color: ForestGreen;
+            }
+            td.blue {
+                border: 2px solid #391CD9;
+                background-color: #391CD9;
+            }
+            td.cheapest {
+                color: black;
+                border: 2px solid LightGreen;
+                background-color: LightGreen;
+            }
+            td.cheapestblue {
+                color: black;
+                border: 2px solid LightBlue;
+                background-color: LightBlue;
             }
             `;
             card.appendChild(style);
             card.appendChild(this.content);
             this.appendChild(card);
         }
-
+        
         if (!this.lastRefreshTimestamp) {
             this.lastRefreshTimestamp = 0;
         }
@@ -72,10 +161,10 @@ class OctopusGreennessForecastCard extends HTMLElement {
     }
 
     getColorForIndex(index) {
-        // Interpolates between green (0) and red (50) based on the index
-        const r = Math.round((index / 50) * 255);
-        const g = Math.round((1 - index / 50) * 255);
-        return `rgb(${r}, ${g}, 0)`;
+        // This function now linearly interpolates the color values between green and red
+        const r = Math.round((index / 50) * 255);  // Red increases with index
+        const g = Math.round(255 - (index / 50) * 255);  // Green decreases with index
+        return `rgb(${r}, ${g}, 0)`;  // Return RGB value, no blue component
     }
 
     setConfig(config) {
