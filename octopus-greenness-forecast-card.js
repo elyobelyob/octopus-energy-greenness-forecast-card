@@ -123,7 +123,7 @@ class OctopusGreennessForecastCard extends HTMLElement {
             card.appendChild(this.content);
             this.appendChild(card);
         }
-        
+
         if (!this.lastRefreshTimestamp) {
             this.lastRefreshTimestamp = 0;
         }
@@ -144,7 +144,7 @@ class OctopusGreennessForecastCard extends HTMLElement {
             const startTime = new Date(entry.start);
             const greennessIndex = entry.greenness_index;
             const greennessScore = entry.greenness_score;
-            const bgColor = this.getColorForIndex(greennessIndex);
+            const bgColor = this.determineColor(greennessScore, config);
 
             const dayDateFormatOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
             const dateDisplay = startTime.toLocaleDateString(undefined, dayDateFormatOptions);
@@ -160,11 +160,20 @@ class OctopusGreennessForecastCard extends HTMLElement {
         this.content.innerHTML = tables;
     }
 
-    getColorForIndex(index) {
-        // This function now linearly interpolates the color values between green and red
-        const r = Math.round((index / 50) * 255);  // Red increases with index
-        const g = Math.round(255 - (index / 50) * 255);  // Green decreases with index
-        return `rgb(${r}, ${g}, 0)`;  // Return RGB value, no blue component
+    determineColor(score, config) {
+        // Determine if fixed thresholds are set and use them, otherwise use gradient
+        if ('lowlimit' in config && 'mediumlimit' in config && 'highlimit' in config) {
+            if (score < config.lowlimit) return 'red';
+            if (score < config.mediumlimit) return 'orange';
+            if (score < config.highlimit) return 'lightgreen';
+            return 'green';
+        } else {
+            // Default gradient coloring logic
+            const maxScore = 50;  // You may adjust this based on your expected maximum score
+            const r = Math.round(255 - (score / maxScore) * 255);
+            const g = Math.round((score / maxScore) * 255);
+            return `rgb(${r}, ${g}, 0)`;
+        }
     }
 
     setConfig(config) {
