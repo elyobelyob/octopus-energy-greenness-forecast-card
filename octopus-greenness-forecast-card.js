@@ -50,7 +50,7 @@ class OctopusGreennessForecastCard extends HTMLElement {
                 padding: 2px;
                 spacing: 0px;
             }
-            tr.rate_row{
+            tr.forecast_row{
                 text-align:center;
                 width:80px;
             }
@@ -79,7 +79,7 @@ class OctopusGreennessForecastCard extends HTMLElement {
             td.time_cheapestblue{
                 border-bottom: 1px solid LightBlue;
             }
-            td.rate {
+            td.forecast {
                 color:white;
                 text-align:center;
                 vertical-align: middle;
@@ -146,11 +146,14 @@ class OctopusGreennessForecastCard extends HTMLElement {
             const greennessScore = entry.greenness_score;
             const bgColor = this.determineColor(greennessScore, config);
 
-            const dayDateFormatOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-            const dateDisplay = startTime.toLocaleDateString(undefined, dayDateFormatOptions);
+            const day = startTime.toLocaleDateString(undefined, { weekday: 'short' });
+            const month = startTime.toLocaleDateString(undefined, { month: 'short' });
+            const dayNum = startTime.toLocaleDateString(undefined, { day: 'numeric' });
+
+            const dateDisplay = `${day} ${month} ${dayNum}`;
 
             tables += `<tr>
-                <td class="date-time">${dateDisplay}</td>
+                <td class="time">${dateDisplay}</td>
                 <td style="background-color:${bgColor};">${greennessScore}</td>
                 <td style="background-color:${bgColor}; border-top-right-radius: 15px; border-bottom-right-radius: 15px;">${greennessIndex}</td>
             </tr>`;
