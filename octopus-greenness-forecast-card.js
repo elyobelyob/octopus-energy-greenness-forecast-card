@@ -148,6 +148,7 @@ class OctopusGreennessForecastCard extends HTMLElement {
             const startTime = new Date(entry.start);
             const greennessIndex = entry.greenness_index;
             const greennessScore = entry.greenness_score;
+            const isHighlighted = entry.is_highlighted;
             const bgColor = this.determineColor(greennessScore, config); // Ensure this returns a CSS color value
 
             const day = startTime.toLocaleDateString("en-US", { weekday: 'short' }); // Adjusted for specific locale
@@ -155,10 +156,16 @@ class OctopusGreennessForecastCard extends HTMLElement {
             const dayNum = startTime.getDate(); // Get day as a number
 
             const dateDisplay = `${day} ${dayNum} ${month}`; // Adjusted format
+            let highlighted = "&nbsp;"; // Initialize as empty
+
+            // Check if the entry is highlighted
+            if (isHighlighted) {
+                highlighted = `👑`; 
+            }
 
             // Using inline styles for background color
             tables += `<tr class="forecast_row">
-                <td class="time time_${bgColor}">${dateDisplay}</td>
+                <td class="time time_${bgColor}">${dateDisplay} ${highlighted}</td>
                 <td class="forecast_score" style="background-color:${bgColor};">${greennessScore}</td>
                 <td class="forecast_index" style="background-color:${bgColor};">${greennessIndex}</td>
             </tr>`;
