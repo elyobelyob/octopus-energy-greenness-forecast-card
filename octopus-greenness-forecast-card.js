@@ -14,10 +14,6 @@ class OctopusGreennessForecastCard extends HTMLElement {
                 padding: 0px;
                 spacing: 0px;
             }
-            table.sub_table {
-                border-collapse: seperate;
-                border-spacing: 0px 2px;
-            }
             table.main {
                 padding: 0px;
             }
@@ -28,7 +24,7 @@ class OctopusGreennessForecastCard extends HTMLElement {
             td.current {
                 position: relative;
             }    
-            td.current:before{
+            td.current:before {
                 content: "";
                 position: absolute;
                 top: 0;
@@ -50,7 +46,7 @@ class OctopusGreennessForecastCard extends HTMLElement {
                 padding: 2px;
                 spacing: 0px;
             }
-            tr.forecast_row{
+            tr.forecast_row {
                 text-align:center;
                 width:80px;
             }
@@ -58,28 +54,34 @@ class OctopusGreennessForecastCard extends HTMLElement {
                 text-align:center;
                 vertical-align: middle;
             }
-            td.time_red{
+            td.time_red {
                 border-bottom: 1px solid Tomato;
             }
-            td.time_orange{
+            td.time_orange {
                 border-bottom: 1px solid orange;
             }
-            td.time_green{
+            td.time_green {
                 border-bottom: 1px solid MediumSeaGreen;
             }
             td.time_lightgreen {
                 border-bottom: 1px solid ForestGreen;
             }
-            td.time_blue{
+            td.time_blue {
                 border-bottom: 1px solid #391CD9;
             }
-            td.time_cheapest{
+            td.time_cheapest {
                 border-bottom: 1px solid LightGreen;
             }
-            td.time_cheapestblue{
+            td.time_cheapestblue {
                 border-bottom: 1px solid LightBlue;
             }
-            td.forecast {
+            td.forecast_score {
+                color:white;
+                text-align:center;
+                vertical-align: middle;
+                width:80px;
+            }
+            td.forecast_index {
                 color:white;
                 text-align:center;
                 vertical-align: middle;
@@ -87,7 +89,7 @@ class OctopusGreennessForecastCard extends HTMLElement {
 
                 border-top-right-radius:15px;
                 border-bottom-right-radius:15px;
-            }
+            }            
             td.red {
                 border: 2px solid Tomato;
                 background-color: Tomato;
@@ -117,7 +119,7 @@ class OctopusGreennessForecastCard extends HTMLElement {
                 color: black;
                 border: 2px solid LightBlue;
                 background-color: LightBlue;
-            }
+            }            
             `;
             card.appendChild(style);
             card.appendChild(this.content);
@@ -140,24 +142,28 @@ class OctopusGreennessForecastCard extends HTMLElement {
         const forecastData = currentstate.attributes.forecast;
 
         let tables = "<table class='main'><tbody>";
+
+        // Generate table rows
         forecastData.forEach(entry => {
             const startTime = new Date(entry.start);
             const greennessIndex = entry.greenness_index;
             const greennessScore = entry.greenness_score;
-            const bgColor = this.determineColor(greennessScore, config);
+            const bgColor = this.determineColor(greennessScore, config); // Ensure this returns a CSS color value
 
-            const day = startTime.toLocaleDateString(undefined, { weekday: 'short' });
-            const month = startTime.toLocaleDateString(undefined, { month: 'short' });
-            const dayNum = startTime.toLocaleDateString(undefined, { day: 'numeric' });
+            const day = startTime.toLocaleDateString("en-US", { weekday: 'short' }); // Adjusted for specific locale
+            const month = startTime.toLocaleDateString("en-US", { month: 'short' });
+            const dayNum = startTime.getDate(); // Get day as a number
 
-            const dateDisplay = `${day} ${month} ${dayNum}`;
+            const dateDisplay = `${day} ${dayNum} ${month}`; // Adjusted format
 
-            tables += `<tr>
-                <td class="time">${dateDisplay}</td>
-                <td style="background-color:${bgColor};">${greennessScore}</td>
-                <td style="background-color:${bgColor}; border-top-right-radius: 15px; border-bottom-right-radius: 15px;">${greennessIndex}</td>
+            // Using inline styles for background color
+            tables += `<tr class="forecast_row">
+                <td class="time time_${bgColor}">${dateDisplay}</td>
+                <td class="forecast_score" style="background-color:${bgColor};">${greennessScore}</td>
+                <td class="forecast_index" style="background-color:${bgColor};">${greennessIndex}</td>
             </tr>`;
         });
+
         tables += "</tbody></table>";
 
         this.content.innerHTML = tables;
@@ -165,18 +171,10 @@ class OctopusGreennessForecastCard extends HTMLElement {
 
     determineColor(score, config) {
         // Determine if fixed thresholds are set and use them, otherwise use gradient
-        if ('lowlimit' in config && 'mediumlimit' in config && 'highlimit' in config) {
-            if (score < config.lowlimit) return 'red';
-            if (score < config.mediumlimit) return 'orange';
-            if (score < config.highlimit) return 'lightgreen';
-            return 'green';
-        } else {
-            // Default gradient coloring logic
-            const maxScore = 50;  // You may adjust this based on your expected maximum score
-            const r = Math.round(255 - (score / maxScore) * 255);
-            const g = Math.round((score / maxScore) * 255);
-            return `rgb(${r}, ${g}, 0)`;
-        }
+        if (score < config.lowlimit) return 'red';
+        if (score < config.mediumlimit) return 'orange';
+        if (score < config.highlimit) return 'lightgreen';
+        return 'green';
     }
 
     setConfig(config) {
@@ -185,12 +183,11 @@ class OctopusGreennessForecastCard extends HTMLElement {
         }
         const defaultConfig = {
             title: 'Greenness Forecast',
-            hour12: true,
             cardRefreshIntervalSeconds: 60,
-            showPast: false,
             cols: 1,
-            highlightCheapest: false,
-            colorCoding: true,
+            lowlimit: 20,
+            mediumlimit: 40,
+            highlimit: 60,
         };
         this._config = {
             ...defaultConfig,
