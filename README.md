@@ -70,10 +70,10 @@ Here's a breakdown of all the available configuration items:
 
 #### A note on colouring
 
-* If the index score is above `highLimit`, then the row is in red
-* If the index score is above `mediumLimit`, then the row is coloured orange
-* if the index score is above `lowLimit`, then the row is coloured dark green
-* if the index score is below `lowLimit`, then the row is coloured green
+* If the index score is above `highLimit`, then the row is in green
+* If the index score is above `mediumLimit`, then the row is coloured light green
+* if the index score is above `lowLimit`, then the row is coloured orange
+* if the index score is below `lowLimit`, then the row is coloured red
 
 #### Screenshots
 ![screenshot_1](assets/screenshot_1.png)
