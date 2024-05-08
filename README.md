@@ -46,40 +46,13 @@ Here's an example yaml configuration - obviously replacing `<your_id_here>` with
 ```
 type: custom:octopus-greenness-forecast-card
 currentEntity: event.octopus_energy_electricity_<your_id_here>_current_day_rates
-cols: 2
-hour12: false
-showday: true
-showpast: false
-title: Octopus Import
-unitstr: p
 lowlimit: 15
 mediumlimit: 20
 highlimit: 30
-roundUnits: 2
-cheapest: true
-multiplier: 100
+showTimes: true
 
 ```
-and here is one for export rates:
-```
-type: custom:octopus-greenness-forecast-card
-pastEntity: event.octopus_energy_electricity_<your_id_here>_export_previous_day_rates
-currentEntity: event.octopus_energy_electricity_<your_id_here>_export_current_day_rates
-futureEntity: event.octopus_energy_electricity_22l4132637_<your_id_here>_export_next_day_rates
-cols: 3
-hour12: false
-showday: false
-showpast: false
-title: Octopus Export
-unitstr: p
-lowlimit: null
-mediumlimit: 10
-highlimit: 19
-roundUnits: 2
-cheapest: true
-multiplier: 100
-exportrates: true
-```
+
 
 Here's a breakdown of all the available configuration items:
 

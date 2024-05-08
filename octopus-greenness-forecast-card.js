@@ -12,14 +12,21 @@ class OctopusGreennessForecastCard extends HTMLElement {
             table {
                 width: 100%;
                 padding: 0px;
-                spacing: 0px;
+                border-collapse: separate;
+                border-spacing: 1px
             }
             table.main {
                 padding: 0px;
             }
             td, th {
+                vertical-align: top;
                 padding: 0px;
-                spacing: 0px;
+            }
+            th:first-child, td:first-child {
+                border-left: none;  /* No left border for the first cell */
+            }
+            th:last-child, td:last-child {
+                border-right: none;  /* No right border for the last cell */
             }
             td.time_highlight {
                 font-weight: bold;
@@ -44,11 +51,6 @@ class OctopusGreennessForecastCard extends HTMLElement {
             thead th {
                 text-align: left;
                 padding: 0px;
-            }
-            td {
-                vertical-align: top;
-                padding: 2px;
-                spacing: 0px;
             }
             tr.forecast_row {
                 text-align:center;
