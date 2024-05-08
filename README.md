@@ -76,8 +76,7 @@ Here's a breakdown of all the available configuration items:
 * if the index score is below `lowLimit`, then the row is coloured green
 
 #### Screenshots
-![screenshot_1](assets/import.png)
-![screenshot_2](assets/export.png)
+![screenshot_1](assets/screenshot_1.png)
 
 #### Thanks/inspiration
 This card was based on and reworked from the code [lozzd/octopus-energy-rates-card](https://github.com/lozzd/octopus-energy-rates-card).
