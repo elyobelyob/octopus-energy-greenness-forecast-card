@@ -47,7 +47,7 @@ Here's an example yaml configuration - obviously replacing `<your_id_here>` with
 
 
 ```
-type: custom:octopus-greenness-forecast-card
+type: custom:octopus-energy-greenness-forecast-card
 currentEntity: event.octopus_energy_electricity_<your_id_here>_greenness_forecast_current_index
 lowlimit: 15
 mediumlimit: 20
