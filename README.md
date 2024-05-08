@@ -1,4 +1,4 @@
-# Lovelace custom card for Octopus Greenness Forecast display
+# Lovelace custom card for Octopus Greener Days Forecast display
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration)
 
