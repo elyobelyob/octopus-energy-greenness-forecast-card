@@ -17,6 +17,10 @@ class OctopusGreennessForecastCard extends HTMLElement {
             table.main {
                 padding: 0px;
             }
+            td, th {
+                padding: 0px;
+                spacing: 0px;
+            }
             td.time_highlight {
                 font-weight: bold;
                 color: white;
@@ -146,6 +150,7 @@ class OctopusGreennessForecastCard extends HTMLElement {
         // Generate table rows
         forecastData.forEach(entry => {
             const startTime = new Date(entry.start);
+            const endTime = new Date(entry.end);
             const greennessIndex = entry.greenness_index;
             const greennessScore = entry.greenness_score;
             const isHighlighted = entry.is_highlighted;
@@ -158,20 +163,24 @@ class OctopusGreennessForecastCard extends HTMLElement {
             const dateDisplay = `${day} ${dayNum} ${month}`; // Adjusted format
             let highlighted = "&nbsp;"; // Initialize as empty
 
-            // Check if the entry is highlighted
             if (isHighlighted) {
                 highlighted = `👑`; 
             }
 
-            // Using inline styles for background color
+            const timeFormatOptions = { hour: '2-digit', minute: '2-digit', hour12: config.hour12 };
+            const startTimeDisplay = startTime.toLocaleTimeString("en-US", timeFormatOptions);
+            const endTimeDisplay = endTime.toLocaleTimeString("en-US", timeFormatOptions);
+            const timeDisplay = `${startTimeDisplay} - ${endTimeDisplay}`;
+
+            // Append time display conditionally based on config.showTimes
             tables += `<tr class="forecast_row">
-                <td class="time time_${bgColor}">${dateDisplay} ${highlighted}</td>
+                <td class="time time_${bgColor}">${dateDisplay} ${config.showTimes ? timeDisplay : ''} ${highlighted} </td>
                 <td class="forecast_score" style="background-color:${bgColor};">${greennessScore}</td>
                 <td class="forecast_index" style="background-color:${bgColor};">${greennessIndex}</td>
             </tr>`;
-        });
+});
 
-        tables += "</tbody></table>";
+tables += "</tbody></table>";
 
         this.content.innerHTML = tables;
     }
@@ -195,6 +204,8 @@ class OctopusGreennessForecastCard extends HTMLElement {
             lowlimit: 20,
             mediumlimit: 40,
             highlimit: 60,
+            highlighted: true,
+            showtimes: false,   
         };
         this._config = {
             ...defaultConfig,
