@@ -189,9 +189,9 @@ tables += "</tbody></table>";
 
     determineColor(score, config) {
         // Determine if fixed thresholds are set and use them, otherwise use gradient
-        if (score < config.lowlimit) return 'red';
-        if (score < config.mediumlimit) return 'orange';
-        if (score < config.highlimit) return 'lightgreen';
+        if (score < config.lowLimit) return 'red';
+        if (score < config.mediumLimit) return 'orange';
+        if (score < config.highLimit) return 'lightgreen';
         return 'green';
     }
 
@@ -203,11 +203,11 @@ tables += "</tbody></table>";
             title: 'Greenness Forecast',
             cardRefreshIntervalSeconds: 60,
             cols: 1,
-            lowlimit: 20,
-            mediumlimit: 40,
-            highlimit: 60,
+            lowLimit: 20,
+            mediumLimit: 40,
+            highLimit: 60,
             highlighted: true,
-            showtimes: false,   
+            showTimes: false,   
         };
         this._config = {
             ...defaultConfig,
