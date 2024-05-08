@@ -56,7 +56,6 @@ showTimes: true
 
 ```
 
-
 Here's a breakdown of all the available configuration items:
 
 | Name          | Optional | Default       | Description                                                                                                                                          |
