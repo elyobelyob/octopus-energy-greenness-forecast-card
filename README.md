@@ -64,10 +64,9 @@ Here's a breakdown of all the available configuration items:
 | currentEntity | N        | N/A           | Name of the sensor that contains the current rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                  |
 | title         | Y        | "Agile Rates" | The title of the card in the dashboard                                                                                                               |
 | lowlimit      | Y        |  5 (pence)    | If the price is above `lowlimit`, the row is marked dark green. (this option is only applicable for import rates                                     |
-| mediumlimit   | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked yellow                                                                                        |
+| mediumlimit   | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked orange.                                                                                        |
 | highlimit     | Y        | 30 (pence)    | If the price is above `highlimit`, the row is marked red.                                                                                            |
 | showTimes     | Y        | false         | Whether you want to show the times this greeness index applies, normally 11:00PM - 06:00 AM                                                          |
-| exportrates   | Y        | false         | Reverses the colours for use when showing export rates instead of import                                                                             |
 
 #### A note on colouring
 
