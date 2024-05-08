@@ -1,4 +1,4 @@
-class OctopusGreennessForecastCard extends HTMLElement {
+class OctopusEnergyGreennessForecastCard extends HTMLElement {
     set hass(hass) {
         const config = this._config;
         if (!this.content) {
@@ -219,12 +219,12 @@ tables += "</tbody></table>";
     }
 }
 
-customElements.define('octopus-greenness-forecast-card', OctopusGreennessForecastCard);
+customElements.define('octopus-energy-greenness-forecast-card', OctopusEnergyGreennessForecastCard);
 
 window.customCards = window.customCards || [];
 window.customCards.push({
-    type: 'octopus-greenness-forecast-card',
-    name: 'Octopus Greenness Forecast Card',
+    type: 'octopus-energy-greenness-forecast-card',
+    name: 'Octopus Energy Greenness Forecast Card',
     preview: false,
     description: 'This card displays the greenness forecast for Octopus Energy.'
 });
