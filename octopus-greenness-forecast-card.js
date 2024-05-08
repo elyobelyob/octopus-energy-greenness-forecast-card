@@ -202,7 +202,6 @@ tables += "</tbody></table>";
         const defaultConfig = {
             title: 'Greenness Forecast',
             cardRefreshIntervalSeconds: 60,
-            cols: 1,
             lowLimit: 20,
             mediumLimit: 40,
             highLimit: 60,
