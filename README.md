@@ -6,7 +6,7 @@ This lovelace card displays the Octopus Greener Days score data, pulling the dat
 
 This provides a convenient, at a glance way to observe the weeks ahead Greener Days score provided by Octopus.
 
-Each day is given a score out of 100.  The higher the score then greener the day, ie more renewables on the grid.
+Each day is given a score out of 100.  The higher the score then greener the period, ie more renewables on the grid.
 
 The timeframe Octopus analyse is 23:00 to 06:00 each day.
 
