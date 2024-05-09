@@ -33,7 +33,7 @@ You can also install manually by downloading/copying the Javascript file in to `
 Settings -> Dashboards -> Top Right Menu -> Resources (Advanced Mode needs to be set in the user settings in Home Assistant).
 
 #### Configuration
-Add the card to your dashboard using **Add Card -> Custom: Octopus Energy Greeness Card**.
+Add the card to your dashboard using **Add Card -> Custom: Octopus Energy Greeness Forecast Card**.
 
 You'll need to then configure the yaml yourself - the `type` part is filled out for you.
 
