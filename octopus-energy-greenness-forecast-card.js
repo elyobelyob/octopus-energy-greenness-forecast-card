@@ -177,8 +177,8 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
             // Append time display conditionally based on config.showTimes
             tables += `<tr class="forecast_row">
                 <td class="time time_${bgColor}">${dateDisplay} ${config.showTimes ? timeDisplay : ''} ${highlighted} </td>
-                <td class="forecast_score" style="background-color:${bgColor};">${greennessScore}</td>
-                <td class="forecast_index" style="background-color:${bgColor};">${greennessIndex}</td>
+                <td class="forecast_score ${bgColor}">${greennessScore}</td>
+                <td class="forecast_index ${bgColor}">${greennessIndex}</td>
             </tr>`;
 });
 
