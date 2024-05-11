@@ -75,12 +75,6 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
             td.time_blue {
                 border-bottom: 1px solid #391CD9;
             }
-            td.time_cheapest {
-                border-bottom: 1px solid LightGreen;
-            }
-            td.time_cheapestblue {
-                border-bottom: 1px solid LightBlue;
-            }
             td.forecast_score {
                 color:white;
                 text-align:center;
@@ -115,17 +109,7 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
             td.blue {
                 border: 2px solid #391CD9;
                 background-color: #391CD9;
-            }
-            td.cheapest {
-                color: black;
-                border: 2px solid LightGreen;
-                background-color: LightGreen;
-            }
-            td.cheapestblue {
-                color: black;
-                border: 2px solid LightBlue;
-                background-color: LightBlue;
-            }            
+            }        
             `;
             card.appendChild(style);
             card.appendChild(this.content);
