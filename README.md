@@ -22,7 +22,7 @@ Simply click this button to go directly to the details page:
 
 In the Home Assistant UI:
 * Use HACS -> Frontend -> Top Right Menu -> Custom repositories
-* Enter a repo of `elyobelyob/octopus-energy-greeness-card` and category of "Lovelace", and click the Add button
+* Enter a repo of `https://github.com/elyobelyob/octopus-energy-greenness-forecast-card` and category of "Dashboard", and click the Add button
 * Click "Explore & Download Repositories" and start searching for "octo" and you should see the entry
 * Click "Download" in the bottom right
 
@@ -54,6 +54,7 @@ lowlimit: 15
 mediumlimit: 20
 highlimit: 30
 showTimes: false
+showDays: 7
 
 ```
 
@@ -67,6 +68,7 @@ Here's a breakdown of all the available configuration items:
 | mediumLimit   | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked orange.                                                                                       |
 | highLimit     | Y        | 30 (pence)    | If the price is above `highlimit`, the row is marked red.                                                                                            |
 | showTimes     | Y        | false         | Whether you want to show the times this greeness index applies, normally 11:00PM - 06:00 AM                                                          |
+| showDays      | Y        | 7             | Number of days to show                                                                       |
 
 #### A note on colouring
 

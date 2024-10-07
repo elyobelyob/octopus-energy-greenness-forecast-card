@@ -128,43 +128,63 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
         this.lastRefreshTimestamp = currentTime;
 
         const entityId = config.currentEntity;
-        const currentstate = hass.states[entityId];
-        const forecastData = currentstate.attributes.forecast;
+        const currentState = hass.states[entityId];
+        const forecastData = currentState.attributes.forecast;
+
+        const showDays = config.showDays || 7;
 
         let tables = "<table class='main'><tbody>";
 
+        const limitedForecastData = forecastData.slice(0, showDays);        
+
         // Generate table rows
-        forecastData.forEach(entry => {
-            const startTime = new Date(entry.start);
-            const endTime = new Date(entry.end);
-            const greennessIndex = entry.greenness_index;
-            const greennessScore = entry.greenness_score;
-            const isHighlighted = entry.is_highlighted;
-            const bgColor = this.determineColor(greennessScore, config); // Ensure this returns a CSS color value
+        limitedForecastData.forEach((entry) => {
+          const startTime = new Date(entry.start);
+          const endTime = new Date(entry.end);
+          const greennessIndex = entry.greenness_index;
+          const greennessScore = entry.greenness_score;
+          const isHighlighted = entry.is_highlighted;
+          const bgColor = this.determineColor(greennessScore, config); // Ensure this returns a CSS color value
 
-            const day = startTime.toLocaleDateString("en-US", { weekday: 'short' }); // Adjusted for specific locale
-            const month = startTime.toLocaleDateString("en-US", { month: 'short' });
-            const dayNum = startTime.getDate(); // Get day as a number
+          const day = startTime.toLocaleDateString("en-US", {
+            weekday: "short",
+          }); // Adjusted for specific locale
+          const month = startTime.toLocaleDateString("en-US", {
+            month: "short",
+          });
+          const dayNum = startTime.getDate(); // Get day as a number
 
-            const dateDisplay = `${day} ${dayNum} ${month}`; // Adjusted format
-            let highlighted = "&nbsp;"; // Initialize as empty
+          const dateDisplay = `${day} ${dayNum} ${month}`; // Adjusted format
+          let highlighted = "&nbsp;"; // Initialize as empty
 
-            if (isHighlighted) {
-                highlighted = `👑`; 
-            }
+          if (isHighlighted) {
+            highlighted = `👑`;
+          }
 
-            const timeFormatOptions = { hour: '2-digit', minute: '2-digit', hour12: config.hour12 };
-            const startTimeDisplay = startTime.toLocaleTimeString("en-US", timeFormatOptions);
-            const endTimeDisplay = endTime.toLocaleTimeString("en-US", timeFormatOptions);
-            const timeDisplay = `${startTimeDisplay} - ${endTimeDisplay}`;
+          const timeFormatOptions = {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: config.hour12,
+          };
+          const startTimeDisplay = startTime.toLocaleTimeString(
+            "en-US",
+            timeFormatOptions
+          );
+          const endTimeDisplay = endTime.toLocaleTimeString(
+            "en-US",
+            timeFormatOptions
+          );
+          const timeDisplay = `${startTimeDisplay} - ${endTimeDisplay}`;
 
-            // Append time display conditionally based on config.showTimes
-            tables += `<tr class="forecast_row">
-                <td class="time time_${bgColor}">${dateDisplay} ${config.showTimes ? timeDisplay : ''} ${highlighted} </td>
+          // Append time display conditionally based on config.showTimes
+          tables += `<tr class="forecast_row">
+                <td class="time time_${bgColor}">${dateDisplay} ${
+            config.showTimes ? timeDisplay : ""
+          } ${highlighted} </td>
                 <td class="forecast_score ${bgColor}">${greennessScore}</td>
                 <td class="forecast_index ${bgColor}">${greennessIndex}</td>
             </tr>`;
-});
+        });
 
 tables += "</tbody></table>";
 
@@ -190,7 +210,8 @@ tables += "</tbody></table>";
             mediumLimit: 40,
             highLimit: 60,
             highlighted: true,
-            showTimes: false,   
+            showTimes: false,
+            showDays: 7,
         };
         this._config = {
             ...defaultConfig,
