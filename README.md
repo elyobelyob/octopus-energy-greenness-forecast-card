@@ -32,6 +32,8 @@ This should automatically configure all the resources, so you can now skip to **
 You can also install manually by downloading/copying the Javascript file in to `$homeassistant_config_dir/www/community/` and then add the Javascript file to Lovelace in the Home Assistant UI by using
 Settings -> Dashboards -> Top Right Menu -> Resources (Advanced Mode needs to be set in the user settings in Home Assistant).
 
+If it doesn't render, try and change the query string in the resource URI e.g. ?hacstag=123123123a
+
 #### Configuration
 Add the card to your dashboard using **Add Card -> Custom: Octopus Energy Greeness Forecast Card**.
 
@@ -43,7 +45,7 @@ You will need to enable this sensor with the name like sensor.octopus_energy_<yo
 
 The easiest way to find that entity name is by opening the Search within Home Assistant: search for `greeness_index` -> click the chosen result -> choose the Settings tab -> copy `Entity ID`.
 
-Here's an example yaml configuration - obviously replacing `<your_id_here>` with your data from above.
+Here's an example yaml configuration - replacing `<your_id_here>` with your data from above.
 
 
 ```
@@ -62,13 +64,13 @@ Here's a breakdown of all the available configuration items:
 
 | Name          | Optional | Default       | Description                                                                                                                                          |
 |---------------|----------|---------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| currentEntity | N        | N/A           | Name of the sensor that contains the solar indexes you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                  |
-| title         | Y        | "Agile Rates" | The title of the card in the dashboard                                                                                                               |
-| lowLimit      | Y        |  5 (pence)    | If the price is above `lowlimit`, the row is marked dark green. (this option is only applicable for import rates                                     |
-| mediumLimit   | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked orange.                                                                                       |
-| highLimit     | Y        | 30 (pence)    | If the price is above `highlimit`, the row is marked red.                                                                                            |
-| showTimes     | Y        | false         | Whether you want to show the times this greeness index applies, normally 11:00PM - 06:00 AM                                                          |
-| showDays      | Y        | 7             | Number of days to show                                                                       |
+| currentEntity | N        | N/A           | Name of the sensor that contains the greenness indexes, generated from the `HomeAssistant-OctopusEnergy` integration |
+| title         | Y        | "Greenness Forecast" | The title of the card in the dashboard (can also be set to null) |
+| lowLimit      | Y        | 20            | If the value is above `lowlimit`, the row is marked dark green. (this option is only applicable for import rates |
+| mediumLimit   | Y        | 40            | If the value is above `mediumlimit`, the row is marked orange. |
+| highLimit     | Y        | 60            | If the value is above `highlimit`, the row is marked red. |
+| showTimes     | Y        | false         | Whether you want to show the times this greeness index applies, normally 11:00PM - 06:00 AM |
+| showDays      | Y        | 7             | Number of days to show |
 
 #### A note on colouring
 
