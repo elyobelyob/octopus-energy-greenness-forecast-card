@@ -55,9 +55,9 @@ futureEntity: sensor.octopus_energy_<your_id_here>_greenness_forecast_next_index
 lowlimit: 15
 mediumlimit: 20
 highlimit: 30
-showTimes: false
+showTimes: true
 showDays: 7
-
+hour12: false
 ```
 
 Here's a breakdown of all the available configuration items:
@@ -71,6 +71,7 @@ Here's a breakdown of all the available configuration items:
 | highLimit     | Y        | 60            | If the value is above `highlimit`, the row is marked red. |
 | showTimes     | Y        | false         | Whether you want to show the times this greeness index applies, normally 11:00PM - 06:00 AM |
 | showDays      | Y        | 7             | Number of days to show |
+| hour12        | Y        | true          | 12 or 24 hour times displayed |
 
 #### A note on colouring
 

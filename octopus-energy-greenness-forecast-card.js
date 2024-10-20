@@ -164,14 +164,14 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
           const timeFormatOptions = {
             hour: "2-digit",
             minute: "2-digit",
-            hour12: config.hour12,
+            hour12: config.hour12 !== undefined ? config.hour12 : true,
           };
           const startTimeDisplay = startTime.toLocaleTimeString(
-            "en-US",
+            hass.language || "default",
             timeFormatOptions
           );
           const endTimeDisplay = endTime.toLocaleTimeString(
-            "en-US",
+            hass.language || "default",
             timeFormatOptions
           );
           const timeDisplay = `${startTimeDisplay} - ${endTimeDisplay}`;
@@ -179,17 +179,16 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
           // Append time display conditionally based on config.showTimes
           tables += `<tr class="forecast_row">
                 <td class="time time_${bgColor}">${dateDisplay} ${
-            config.showTimes ? timeDisplay : ""
+            config.showTimes ? "&nbsp;&nbsp;" + timeDisplay : ""
           } ${highlighted} </td>
                 <td class="forecast_score ${bgColor}">${greennessScore}</td>
                 <td class="forecast_index ${bgColor}">${greennessIndex}</td>
             </tr>`;
         });
 
-tables += "</tbody></table>";
-
-        this.content.innerHTML = tables;
-    }
+          tables += "</tbody></table>";
+            this.content.innerHTML = tables;
+          }
 
     determineColor(score, config) {
         // Determine if fixed thresholds are set and use them, otherwise use gradient
@@ -212,6 +211,7 @@ tables += "</tbody></table>";
             highlighted: true,
             showTimes: false,
             showDays: 7,
+            hour12: true,
         };
         this._config = {
             ...defaultConfig,
