@@ -52,9 +52,9 @@ Here's an example yaml configuration - replacing `<your_id_here>` with your data
 type: custom:octopus-energy-greenness-forecast-card
 currentEntity: sensor.octopus_energy_<your_id_here>_greenness_forecast_current_index
 futureEntity: sensor.octopus_energy_<your_id_here>_greenness_forecast_next_index
-lowlimit: 15
-mediumlimit: 20
-highlimit: 30
+lowLimit: 15
+mediumLimit: 20
+highLimit: 30
 showTimes: true
 showDays: 7
 hour12: false
@@ -66,10 +66,10 @@ Here's a breakdown of all the available configuration items:
 |---------------|----------|---------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------|
 | currentEntity | N        | N/A           | Name of the sensor that contains the greenness indexes, generated from the `HomeAssistant-OctopusEnergy` integration |
 | title         | Y        | "Greenness Forecast" | The title of the card in the dashboard (can also be set to null) |
-| lowLimit      | Y        | 20            | If the value is above `lowlimit`, the row is marked dark green. (this option is only applicable for import rates |
-| mediumLimit   | Y        | 40            | If the value is above `mediumlimit`, the row is marked orange. |
-| highLimit     | Y        | 60            | If the value is above `highlimit`, the row is marked red. |
-| showTimes     | Y        | false         | Whether you want to show the times this greeness index applies, normally 11:00PM - 06:00 AM |
+| lowLimit      | Y        | 20            | If the value is above `lowLimit`, the row is marked dark green. (this option is only applicable for import rates |
+| mediumLimit   | Y        | 40            | If the value is above `mediumLimit`, the row is marked orange. |
+| highLimit     | Y        | 60            | If the value is above `highLimit`, the row is marked red. |
+| showTimes     | Y        | false         | Whether you want to show the times this greenness index applies, normally 11:00PM - 06:00 AM |
 | showDays      | Y        | 7             | Number of days to show |
 | hour12        | Y        | true          | 12 or 24 hour times displayed |
 
