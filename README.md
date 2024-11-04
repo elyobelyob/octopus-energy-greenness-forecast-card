@@ -70,7 +70,8 @@ Here's a breakdown of all the available configuration items:
 | mediumLimit   | Y        | 40            | If the value is above `mediumLimit`, the row is marked orange. |
 | highLimit     | Y        | 60            | If the value is above `highLimit`, the row is marked red. |
 | showTimes     | Y        | false         | Whether you want to show the times this greenness index applies, normally 11:00PM - 06:00 AM |
-| showDays      | Y        | 7             | Number of days to show |
+| showDays      | Y        | 7             | Number of days to show |0 AM |
+| showCrown     | Y        | truew         | Show the crown for the highlighted days |
 | hour12        | Y        | true          | 12 or 24 hour times displayed |
 
 #### A note on colouring

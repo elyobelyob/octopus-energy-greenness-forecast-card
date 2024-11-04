@@ -157,7 +157,7 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
           const dateDisplay = `${day} ${dayNum} ${month}`; // Adjusted format
           let highlighted = "&nbsp;"; // Initialize as empty
 
-          if (isHighlighted) {
+          if (isHighlighted && config.showCrown) {
             highlighted = `👑`;
           }
 
@@ -211,6 +211,7 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
             highlighted: true,
             showTimes: false,
             showDays: 7,
+            showCrown: true,
             hour12: true,
         };
         this._config = {
