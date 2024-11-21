@@ -58,6 +58,7 @@ highLimit: 30
 showTimes: true
 showDays: 7
 hour12: false
+indexCase: ucf
 ```
 
 Here's a breakdown of all the available configuration items:
@@ -74,6 +75,7 @@ Here's a breakdown of all the available configuration items:
 | showHighlighted | Y        | true          | Show the crown for the highlighted days |
 | highlightedEmoji | Y       | 👑            | Change the highlighted emoji to what you want ... find one at [Emojipedia](https://emojipedia.org/). |
 | hour12          | Y        | true          | 12 or 24 hour times displayed |
+| indexCase       | Y        | uc            | Changes the Index case  (MEDIUM etc) ... uc (Upper Case), ucf (Upper Case First), lc (lower case) |
 
 #### A note on colouring
 

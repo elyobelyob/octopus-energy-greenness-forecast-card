@@ -1,14 +1,14 @@
 class OctopusEnergyGreennessForecastCard extends HTMLElement {
-    set hass(hass) {
-        const config = this._config;
-        if (!this.content) {
-            const card = document.createElement('ha-card');
-            card.header = config.title;
-            this.content = document.createElement('div');
-            this.content.style.padding = '0 16px 16px';
+  set hass(hass) {
+    const config = this._config;
+    if (!this.content) {
+      const card = document.createElement("ha-card");
+      card.header = config.title;
+      this.content = document.createElement("div");
+      this.content.style.padding = "0 16px 16px";
 
-            const style = document.createElement('style');
-            style.textContent = `
+      const style = document.createElement("style");
+      style.textContent = `
             table {
                 width: 100%;
                 padding: 0px;
@@ -111,119 +111,143 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
                 background-color: #391CD9;
             }        
             `;
-            card.appendChild(style);
-            card.appendChild(this.content);
-            this.appendChild(card);
-        }
+      card.appendChild(style);
+      card.appendChild(this.content);
+      this.appendChild(card);
+    }
 
-        if (!this.lastRefreshTimestamp) {
-            this.lastRefreshTimestamp = 0;
-        }
+    if (!this.lastRefreshTimestamp) {
+      this.lastRefreshTimestamp = 0;
+    }
 
-        const currentTime = Date.now();
-        const cardRefreshIntervalSecondsInMilliseconds = config.cardRefreshIntervalSeconds * 1000;
-        if (!(currentTime - this.lastRefreshTimestamp >= cardRefreshIntervalSecondsInMilliseconds)) {
-            return;
-        }
-        this.lastRefreshTimestamp = currentTime;
+    const currentTime = Date.now();
+    const cardRefreshIntervalSecondsInMilliseconds =
+      config.cardRefreshIntervalSeconds * 1000;
+    if (
+      !(
+        currentTime - this.lastRefreshTimestamp >=
+        cardRefreshIntervalSecondsInMilliseconds
+      )
+    ) {
+      return;
+    }
+    this.lastRefreshTimestamp = currentTime;
 
-        const entityId = config.currentEntity;
-        const currentState = hass.states[entityId];
-        const forecastData = currentState.attributes.forecast;
+    const entityId = config.currentEntity;
+    const currentState = hass.states[entityId];
+    const forecastData = currentState.attributes.forecast;
+    const indexCase = config.indexCase;
 
-        const showDays = config.showDays || 7;
+    const showDays = config.showDays || 7;
 
-        let tables = "<table class='main'><tbody>";
+    let tables = "<table class='main'><tbody>";
 
-        const limitedForecastData = forecastData.slice(0, showDays);        
+    const limitedForecastData = forecastData.slice(0, showDays);
 
-        // Generate table rows
-        limitedForecastData.forEach((entry) => {
-          const startTime = new Date(entry.start);
-          const endTime = new Date(entry.end);
-          const greennessIndex = entry.greenness_index;
-          const greennessScore = entry.greenness_score;
-          const isHighlighted = entry.is_highlighted;
-          const bgColor = this.determineColor(greennessScore, config); // Ensure this returns a CSS color value
+    // Generate table rows
+    limitedForecastData.forEach((entry) => {
+      const startTime = new Date(entry.start);
+      const endTime = new Date(entry.end);
+      const greennessScore = entry.greenness_score;
+      const greennessIndex = this.formatIndexCase(
+        entry.greenness_index,
+        config.indexCase
+      );
+      const isHighlighted = entry.is_highlighted;
+      const bgColor = this.determineColor(greennessScore, config); // Ensure this returns a CSS color value
 
-          const day = startTime.toLocaleDateString("en-US", {
-            weekday: "short",
-          }); // Adjusted for specific locale
-          const month = startTime.toLocaleDateString("en-US", {
-            month: "short",
-          });
-          const dayNum = startTime.getDate(); // Get day as a number
+      const day = startTime.toLocaleDateString("en-US", {
+        weekday: "short",
+      }); // Adjusted for specific locale
+      const month = startTime.toLocaleDateString("en-US", {
+        month: "short",
+      });
+      const dayNum = startTime.getDate(); // Get day as a number
 
-          const dateDisplay = `${day} ${dayNum} ${month}`; // Adjusted format
-          let highlighted = "&nbsp;"; // Initialize as empty
+      const dateDisplay = `${day} ${dayNum} ${month}`; // Adjusted format
+      let highlighted = "&nbsp;"; // Initialize as empty
 
-          if (isHighlighted && config.showHighlighted) {
-            highlighted = config.highlightedEmoji;
-          }
+      if (isHighlighted && config.showHighlighted) {
+        highlighted = config.highlightedEmoji;
+      }
 
-          const timeFormatOptions = {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: config.hour12 !== undefined ? config.hour12 : true,
-          };
-          const startTimeDisplay = startTime.toLocaleTimeString(
-            hass.language || "default",
-            timeFormatOptions
-          );
-          const endTimeDisplay = endTime.toLocaleTimeString(
-            hass.language || "default",
-            timeFormatOptions
-          );
-          const timeDisplay = `${startTimeDisplay} - ${endTimeDisplay}`;
+      const timeFormatOptions = {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: config.hour12 !== undefined ? config.hour12 : true,
+      };
+      const startTimeDisplay = startTime.toLocaleTimeString(
+        hass.language || "default",
+        timeFormatOptions
+      );
+      const endTimeDisplay = endTime.toLocaleTimeString(
+        hass.language || "default",
+        timeFormatOptions
+      );
+      const timeDisplay = `${startTimeDisplay} - ${endTimeDisplay}`;
 
-          // Append time display conditionally based on config.showTimes
-          tables += `<tr class="forecast_row">
+      // Append time display conditionally based on config.showTimes
+      tables += `<tr class="forecast_row">
                 <td class="time time_${bgColor}">${dateDisplay} ${
-            config.showTimes ? "&nbsp;&nbsp;" + timeDisplay : ""
-          } ${highlighted} </td>
+        config.showTimes ? "&nbsp;&nbsp;" + timeDisplay : ""
+      } ${highlighted} </td>
                 <td class="forecast_score ${bgColor}">${greennessScore}</td>
                 <td class="forecast_index ${bgColor}">${greennessIndex}</td>
             </tr>`;
-        });
+    });
 
-          tables += "</tbody></table>";
-            this.content.innerHTML = tables;
-          }
+    tables += "</tbody></table>";
+    this.content.innerHTML = tables;
+  }
 
-    determineColor(score, config) {
-        // Determine if fixed thresholds are set and use them, otherwise use gradient
-        if (score < config.lowLimit) return 'red';
-        if (score < config.mediumLimit) return 'orange';
-        if (score < config.highLimit) return 'lightgreen';
-        return 'green';
+  determineColor(score, config) {
+    // Determine if fixed thresholds are set and use them, otherwise use gradient
+    if (score < config.lowLimit) return "red";
+    if (score < config.mediumLimit) return "orange";
+    if (score < config.highLimit) return "lightgreen";
+    return "green";
+  }
+
+  formatIndexCase(index, caseType) {
+    if (!caseType) return index; // No case conversion if not specified
+    switch (caseType) {
+      case "uc": // Upper Case
+        return index.toUpperCase();
+      case "ucf": // Upper Case First
+        return index.charAt(0).toUpperCase() + index.slice(1).toLowerCase();
+      case "lc": // Lower Case
+        return index.toLowerCase();
+      default:
+        return index; // Default: no change
     }
+  }
 
-    setConfig(config) {
-        if (!config.currentEntity) {
-            throw new Error('You need to define an entity for greenness data.');
-        }
-        const defaultConfig = {
-            title: 'Greenness Forecast',
-            cardRefreshIntervalSeconds: 60,
-            lowLimit: 20,
-            mediumLimit: 40,
-            highLimit: 60,
-            highlighted: true,
-            showTimes: false,
-            showDays: 7,
-            showHighlighted: true,
-            highlightedEmoji: "👑",
-            hour12: true,
-        };
-        this._config = {
-            ...defaultConfig,
-            ...config
-        };
+  setConfig(config) {
+    if (!config.currentEntity) {
+      throw new Error("You need to define an entity for greenness data.");
     }
+    const defaultConfig = {
+      title: "Greenness Forecast",
+      cardRefreshIntervalSeconds: 60,
+      lowLimit: 20,
+      mediumLimit: 40,
+      highLimit: 60,
+      highlighted: true,
+      showTimes: false,
+      showDays: 7,
+      showHighlighted: true,
+      highlightedEmoji: "👑",
+      hour12: true,
+    };
+    this._config = {
+      ...defaultConfig,
+      ...config,
+    };
+  }
 
-    getCardSize() {
-        return 3;
-    }
+  getCardSize() {
+    return 3;
+  }
 }
 
 customElements.define('octopus-energy-greenness-forecast-card', OctopusEnergyGreennessForecastCard);
