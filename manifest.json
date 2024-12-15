@@ -1,7 +1,7 @@
 {
   "domain": "octopus_energy_greenness_forecast_card",
   "name": "Octopus Energy Greenness Forecast Card",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "documentation": "https://github.com/elyobelyob/octopus-energy-greenness-forecast-card",
   "requirements": [],
   "codeowners": ["@elyobelyob"],

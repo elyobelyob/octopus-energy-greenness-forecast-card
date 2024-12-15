@@ -1,7 +1,5 @@
 # Lovelace custom card for Octopus Energy Greenness Forecast
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration)
-
 This lovelace card displays the Octopus Greener Days score data, pulling the data from sensors of the excellent [BottlecapDave/HomeAssistant-OctopusEnergy](https://github.com/BottlecapDave/) integration.
 
 This provides a convenient, at a glance way to observe the weeks ahead Greener Days score provided by Octopus.
