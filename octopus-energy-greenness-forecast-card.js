@@ -135,6 +135,17 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
 
     const entityId = config.currentEntity;
     const currentState = hass.states[entityId];
+
+    // Validate entity and forecast data
+    if (
+      !currentState ||
+      !currentState.attributes ||
+      !currentState.attributes.forecast
+    ) {
+      this.content.innerHTML = `<div class="error">Invalid entity or missing forecast data.</div>`;
+      return;
+    }
+    
     const forecastData = currentState.attributes.forecast;
     const indexCase = config.indexCase;
 
