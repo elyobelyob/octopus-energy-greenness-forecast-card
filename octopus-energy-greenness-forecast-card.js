@@ -67,10 +67,10 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
                 border-bottom: 1px solid orange;
             }
             td.time_green {
-                border-bottom: 1px solid MediumSeaGreen;
+                border-bottom: 1px solid ForestGreen;
             }
             td.time_lightgreen {
-                border-bottom: 1px solid ForestGreen;
+                border-bottom: 1px solid MediumSeaGreen;
             }
             td.time_blue {
                 border-bottom: 1px solid #391CD9;
