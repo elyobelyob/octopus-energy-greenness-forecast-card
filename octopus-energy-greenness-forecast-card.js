@@ -9,6 +9,14 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
 
       const style = document.createElement("style");
       style.textContent = `
+            :host {
+                display: block;
+                overflow: visible;
+            }
+            ha-card {
+                overflow: visible;
+                height: auto;
+            }
             table {
                 width: 100%;
                 padding: 0px;
@@ -18,43 +26,18 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
             table.main {
                 padding: 0px;
             }
-            td, th {
+            td {
                 vertical-align: top;
                 padding: 0px;
             }
-            th:first-child, td:first-child {
-                border-left: none;  /* No left border for the first cell */
+            td:first-child {
+                border-left: none;
             }
-            th:last-child, td:last-child {
-                border-right: none;  /* No right border for the last cell */
-            }
-            td.time_highlight {
-                font-weight: bold;
-                color: white;
-            }
-            td.current {
-                position: relative;
-            }    
-            td.current:before {
-                content: "";
-                position: absolute;
-                top: 0;
-                right: 0;
-                width: 0; 
-                height: 0; 
-                display: block;
-                border-top: calc(var(--paper-font-body1_-_line-height)*0.65) solid transparent;
-                border-bottom: calc(var(--paper-font-body1_-_line-height)*0.65) solid transparent;
-
-                border-right: 10px solid;
-            }
-            thead th {
-                text-align: left;
-                padding: 0px;
+            td:last-child {
+                border-right: none;
             }
             tr.forecast_row {
-                text-align:center;
-                width:80px;
+                text-align: center;
             }
             td.time {
                 text-align:center;
@@ -89,7 +72,7 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
 
                 border-top-right-radius:15px;
                 border-bottom-right-radius:15px;
-            }            
+            }
             td.red {
                 border: 2px solid Tomato;
                 background-color: Tomato;
@@ -109,9 +92,9 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
             td.blue {
                 border: 2px solid #391CD9;
                 background-color: #391CD9;
-            }        
+            }
             `;
-      card.appendChild(style);
+      this.appendChild(style);
       card.appendChild(this.content);
       this.appendChild(card);
     }
@@ -147,10 +130,10 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
     }
     
     const forecastData = currentState.attributes.forecast;
-    const indexCase = config.indexCase;
 
     const showDays = config.showDays || 7;
 
+    const displayLocale = hass.language || "default";
     let tables = "<table class='main'><tbody>";
 
     const limitedForecastData = forecastData.slice(0, showDays);
@@ -165,12 +148,11 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
         config.indexCase
       );
       const isHighlighted = entry.is_highlighted;
-      const bgColor = this.determineColor(greennessScore, config); // Ensure this returns a CSS color value
-
-      const day = startTime.toLocaleDateString("en-US", {
+      const bgColor = this.determineColor(greennessScore, config);
+      const day = startTime.toLocaleDateString(displayLocale, {
         weekday: "short",
-      }); // Adjusted for specific locale
-      const month = startTime.toLocaleDateString("en-US", {
+      });
+      const month = startTime.toLocaleDateString(displayLocale, {
         month: "short",
       });
       const dayNum = startTime.getDate(); // Get day as a number
@@ -188,11 +170,11 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
         hour12: config.hour12 !== undefined ? config.hour12 : true,
       };
       const startTimeDisplay = startTime.toLocaleTimeString(
-        hass.language || "default",
+        displayLocale,
         timeFormatOptions
       );
       const endTimeDisplay = endTime.toLocaleTimeString(
-        hass.language || "default",
+        displayLocale,
         timeFormatOptions
       );
       const timeDisplay = `${startTimeDisplay} - ${endTimeDisplay}`;
@@ -243,7 +225,6 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
       lowLimit: 20,
       mediumLimit: 40,
       highLimit: 60,
-      highlighted: true,
       showTimes: false,
       showDays: 7,
       showHighlighted: true,
@@ -254,6 +235,10 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
       ...defaultConfig,
       ...config,
     };
+    // Reset so the card rebuilds if config changes at runtime
+    this.innerHTML = '';
+    this.content = null;
+    this.lastRefreshTimestamp = 0;
   }
 
   getCardSize() {
