@@ -136,7 +136,14 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
     const displayLocale = hass.language || "default";
     let tables = "<table class='main'><tbody>";
 
-    const limitedForecastData = forecastData.slice(0, showDays);
+    let limitedForecastData = forecastData.slice(0, showDays);
+
+    // Only show highlighted rows if enabled
+    if (config.onlyHighlighted === true) {
+      limitedForecastData = limitedForecastData.filter(
+        (entry) => entry.is_highlighted
+      );
+    }
 
     // Generate table rows
     limitedForecastData.forEach((entry) => {
@@ -228,6 +235,7 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
       showTimes: false,
       showDays: 7,
       showHighlighted: true,
+      onlyHighlighted: false,
       highlightedEmoji: "👑",
       hour12: true,
     };
