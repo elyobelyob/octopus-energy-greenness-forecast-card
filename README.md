@@ -61,20 +61,20 @@ indexCase: ucf
 
 Here's a breakdown of all the available configuration items:
 
-| Name          | Optional | Default       | Description   |
-|-----------------|----------|---------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| currentEntity   | N        | N/A           | Name of the sensor that contains the greenness indexes, generated from the `HomeAssistant-OctopusEnergy` integration |
-| title           | Y        | "Greenness Forecast" | The title of the card in the dashboard (can also be set to null) |
-| lowLimit        | Y        | 20            | If the value is above `lowLimit`, the row is marked dark green. (this option is only applicable for import rates |
-| mediumLimit     | Y        | 40            | If the value is above `mediumLimit`, the row is marked orange. |
-| highLimit       | Y        | 60            | If the value is above `highLimit`, the row is marked red. |
-| showTimes       | Y        | false         | Whether you want to show the times this greenness index applies, normally 11:00PM - 06:00 AM |
-| showDays        | Y        | 7             | Number of days to show |
-| showHighlighted | Y        | true          | Show the crown for the highlighted days |
-| highlightedEmoji | Y       | 👑            | Change the highlighted emoji to what you want ... find one at [Emojipedia](https://emojipedia.org/). |
-| hour12          | Y        | true          | 12 or 24 hour times displayed |
-| indexCase       | Y        | uc            | Changes the Index case  (MEDIUM etc) ... uc (Upper Case), ucf (Upper Case First), lc (lower case) |
-
+| Name               | Optional | Default                | Description |
+|--------------------|----------|------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| currentEntity      | N        | N/A                    | Name of the sensor that contains the greenness indexes, generated from the `HomeAssistant-OctopusEnergy` integration |
+| title              | Y        | "Greenness Forecast"  | The title of the card in the dashboard (can also be set to null) |
+| lowLimit           | Y        | 20                     | If the value is above `lowLimit`, the row is marked dark green. (this option is only applicable for import rates |
+| mediumLimit        | Y        | 40                     | If the value is above `mediumLimit`, the row is marked orange. |
+| highLimit          | Y        | 60                     | If the value is above `highLimit`, the row is marked red. |
+| showTimes          | Y        | false                  | Whether you want to show the times this greenness index applies, normally 11:00PM - 06:00 AM |
+| showDays           | Y        | 7                      | Number of days to show |
+| showHighlighted    | Y        | true                   | Show the crown for the highlighted days |
+| onlyHighlighted    | Y        | false                  | Only display rows where `is_highlighted` is true |
+| highlightedEmoji   | Y        | 👑                     | Change the highlighted emoji to what you want ... find one at [Emojipedia](https://emojipedia.org/). |
+| hour12             | Y        | true                   | 12 or 24 hour times displayed |
+| indexCase          | Y        | uc                     | Changes the Index case (MEDIUM etc) ... uc (Upper Case), ucf (Upper Case First), lc (lower case) |
 #### A note on colouring
 
 * If the index score is above `highLimit`, then the row is in green
