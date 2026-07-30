@@ -1,3 +1,8 @@
+
+# Looks like Octopus have dropped the greenness forecast from the start of August 2026 #
+## So, will be retiring this ##
+
+
 # Lovelace custom card for Octopus Energy Greenness Forecast
 
 This lovelace card displays the Octopus Greener Days score data, pulling the data from sensors of the excellent [BottlecapDave/HomeAssistant-OctopusEnergy](https://github.com/BottlecapDave/) integration.
