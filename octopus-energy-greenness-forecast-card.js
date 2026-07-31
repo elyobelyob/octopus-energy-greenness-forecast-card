@@ -93,6 +93,21 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
                 border: 2px solid #391CD9;
                 background-color: #391CD9;
             }
+            .retirement_notice {
+                border-bottom: 1px solid var(--warning-color, orange);
+                padding: 8px 0 12px;
+                margin-bottom: 12px;
+            }
+            .retirement_title {
+                color: var(--warning-color, orange);
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+            .retirement_body {
+                color: var(--secondary-text-color, #727272);
+                font-size: 0.9em;
+                line-height: 1.4;
+            }
             `;
       this.appendChild(style);
       card.appendChild(this.content);
@@ -118,17 +133,18 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
 
     const entityId = config.currentEntity;
     const currentState = hass.states[entityId];
+    const retirementNotice = this.renderRetirementNotice();
 
-    // Validate entity and forecast data
+    // Octopus has withdrawn the forecast, so no data is the expected state.
     if (
       !currentState ||
       !currentState.attributes ||
       !currentState.attributes.forecast
     ) {
-      this.content.innerHTML = `<div class="error">Invalid entity or missing forecast data.</div>`;
+      this.content.innerHTML = retirementNotice;
       return;
     }
-    
+
     const forecastData = currentState.attributes.forecast;
 
     const showDays = config.showDays || 7;
@@ -197,7 +213,14 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
     });
 
     tables += "</tbody></table>";
-    this.content.innerHTML = tables;
+    this.content.innerHTML = retirementNotice + tables;
+  }
+
+  renderRetirementNotice() {
+    return `<div class="retirement_notice">
+                <div class="retirement_title">&#9888;&#65039; This card is retired</div>
+                <div class="retirement_body">Octopus dropped the Greener Days forecast from the start of August 2026, so no new data will appear. You can safely remove this card from your dashboard and uninstall it from HACS.</div>
+            </div>`;
   }
 
   determineColor(score, config) {

@@ -197,9 +197,12 @@ describe('hass setter — DOM structure', () => {
 });
 
 // ---------------------------------------------------------------------------
-// hass setter — error states
+// hass setter — retirement notice
+//
+// Octopus withdrew the Greener Days forecast, so absent data is the expected
+// state rather than an error. Every render path shows the retirement notice.
 // ---------------------------------------------------------------------------
-describe('hass setter — error states', () => {
+describe('hass setter — retirement notice', () => {
   let card;
 
   beforeEach(() => {
@@ -207,17 +210,44 @@ describe('hass setter — error states', () => {
     card.setConfig(BASE_CONFIG);
   });
 
-  it('should show error when entity is missing from hass.states', () => {
+  it('should show the retirement notice when entity is missing from hass.states', () => {
     card.hass = { language: 'en', states: {} };
-    expect(card.content.innerHTML).toContain('Invalid entity');
+    expect(card.content.innerHTML).toContain('This card is retired');
   });
 
-  it('should show error when forecast attribute is missing', () => {
+  it('should show the retirement notice when forecast attribute is missing', () => {
     card.hass = {
       language: 'en',
       states: { 'sensor.greenness': { attributes: {} } },
     };
-    expect(card.content.innerHTML).toContain('Invalid entity');
+    expect(card.content.innerHTML).toContain('This card is retired');
+  });
+
+  it('should tell the user to remove the card when no data is present', () => {
+    card.hass = { language: 'en', states: {} };
+    expect(card.content.innerHTML).toContain('uninstall it from HACS');
+  });
+
+  it('should render nothing but the notice when no data is present', () => {
+    card.hass = { language: 'en', states: {} };
+    expect(card.querySelectorAll('tr.forecast_row').length).toBe(0);
+  });
+
+  it('should show the retirement notice when forecast data is present', () => {
+    card.hass = makeHass([
+      { start: '2026-04-08T00:00:00Z', end: '2026-04-08T08:00:00Z', greenness_score: 75, greenness_index: 'high', is_highlighted: false },
+    ]);
+    expect(card.content.innerHTML).toContain('This card is retired');
+  });
+
+  it('should still render the forecast table beneath the notice when data is present', () => {
+    card.hass = makeHass([
+      { start: '2026-04-08T00:00:00Z', end: '2026-04-08T08:00:00Z', greenness_score: 75, greenness_index: 'high', is_highlighted: false },
+      { start: '2026-04-09T00:00:00Z', end: '2026-04-09T08:00:00Z', greenness_score: 30, greenness_index: 'low', is_highlighted: false },
+    ]);
+    expect(card.querySelectorAll('tr.forecast_row').length).toBe(2);
+    expect(card.content.innerHTML.indexOf('retirement_notice'))
+      .toBeLessThan(card.content.innerHTML.indexOf('<table'));
   });
 });
 
