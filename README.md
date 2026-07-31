@@ -2,7 +2,7 @@
 >
 > Octopus dropped the Greener Days forecast from the start of August 2026, so no new data will appear. You can safely remove this card from your dashboard and uninstall it from HACS.
 >
-> Version 2.0.0 is the final release, and this repository is archived. Everything below is kept as a record of how the card worked.
+> Version 2.0.0 is the final release. This repository will be archived once people have had time to pick up that update. Everything below is kept as a record of how the card worked.
 
 # Lovelace custom card for Octopus Energy Greenness Forecast
 
