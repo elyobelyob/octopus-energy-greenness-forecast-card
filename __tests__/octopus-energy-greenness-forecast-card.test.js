@@ -27,6 +27,18 @@ function makeHass(forecast) {
 
 const BASE_CONFIG = { currentEntity: 'sensor.greenness' };
 
+// The card drops forecast entries that have already ended, so "now" must be
+// pinned for the fixed fixture dates above to stay in the future.
+const NOW = new Date('2026-04-07T12:00:00Z');
+
+beforeAll(() => {
+  jest.useFakeTimers().setSystemTime(NOW);
+});
+
+afterAll(() => {
+  jest.useRealTimers();
+});
+
 // ---------------------------------------------------------------------------
 // determineColor
 // ---------------------------------------------------------------------------
@@ -273,8 +285,8 @@ describe('hass setter — rendering', () => {
   it('should limit rendered rows to showDays', () => {
     card.setConfig({ ...BASE_CONFIG, showDays: 2 });
     const entries = Array.from({ length: 5 }, (_, i) => ({
-      start: `2026-04-0${i + 1}T00:00:00Z`,
-      end: `2026-04-0${i + 1}T08:00:00Z`,
+      start: `2026-04-${String(i + 8).padStart(2, '0')}T00:00:00Z`,
+      end: `2026-04-${String(i + 8).padStart(2, '0')}T08:00:00Z`,
       greenness_score: 50,
       greenness_index: 'medium',
       is_highlighted: false,
@@ -344,6 +356,71 @@ describe('hass setter — rendering', () => {
     card.hass = hass;
     // French short weekday for a Wednesday is 'mer.' — confirms locale was used
     expect(card.querySelector('td.time').textContent.toLowerCase()).toMatch(/mer/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// hass setter — stale entries
+//
+// Octopus stopped publishing, so the sensor's forecast attribute is frozen and
+// its entries age into the past. Entries that have already ended are dropped so
+// the card degrades to the retirement notice alone rather than showing history.
+// ---------------------------------------------------------------------------
+describe('hass setter — stale entries', () => {
+  let card;
+
+  beforeEach(() => {
+    card = createElement();
+    card.setConfig(BASE_CONFIG);
+  });
+
+  it('should drop entries that have already ended', () => {
+    card.hass = makeHass([
+      { start: '2026-04-05T23:00:00Z', end: '2026-04-06T06:00:00Z', greenness_score: 18, greenness_index: 'low', is_highlighted: false },
+      { start: '2026-04-08T23:00:00Z', end: '2026-04-09T06:00:00Z', greenness_score: 75, greenness_index: 'high', is_highlighted: false },
+    ]);
+    expect(card.querySelectorAll('tr.forecast_row').length).toBe(1);
+    expect(card.content.innerHTML).toContain('75');
+    expect(card.content.innerHTML).not.toContain('18');
+  });
+
+  it('should show only the notice when every entry has ended', () => {
+    card.hass = makeHass([
+      { start: '2026-04-04T23:00:00Z', end: '2026-04-05T06:00:00Z', greenness_score: 18, greenness_index: 'low', is_highlighted: true },
+      { start: '2026-04-05T23:00:00Z', end: '2026-04-06T06:00:00Z', greenness_score: 21, greenness_index: 'low', is_highlighted: true },
+    ]);
+    expect(card.content.innerHTML).toContain('This card is retired');
+    expect(card.querySelectorAll('tr.forecast_row').length).toBe(0);
+    expect(card.querySelector('table')).toBeNull();
+  });
+
+  it('should keep an entry that is currently in progress', () => {
+    // Started before pinned now, ends after it.
+    card.hass = makeHass([
+      { start: '2026-04-07T06:00:00Z', end: '2026-04-07T18:00:00Z', greenness_score: 50, greenness_index: 'medium', is_highlighted: false },
+    ]);
+    expect(card.querySelectorAll('tr.forecast_row').length).toBe(1);
+  });
+
+  it('should keep an entry whose end date cannot be parsed', () => {
+    card.hass = makeHass([
+      { start: '2026-04-08T23:00:00Z', end: 'not-a-date', greenness_score: 60, greenness_index: 'high', is_highlighted: false },
+    ]);
+    expect(card.querySelectorAll('tr.forecast_row').length).toBe(1);
+  });
+
+  it('should count showDays against current entries only', () => {
+    card.setConfig({ ...BASE_CONFIG, showDays: 2 });
+    card.hass = makeHass([
+      { start: '2026-04-05T23:00:00Z', end: '2026-04-06T06:00:00Z', greenness_score: 10, greenness_index: 'low', is_highlighted: false },
+      { start: '2026-04-08T23:00:00Z', end: '2026-04-09T06:00:00Z', greenness_score: 20, greenness_index: 'low', is_highlighted: false },
+      { start: '2026-04-09T23:00:00Z', end: '2026-04-10T06:00:00Z', greenness_score: 30, greenness_index: 'low', is_highlighted: false },
+      { start: '2026-04-10T23:00:00Z', end: '2026-04-11T06:00:00Z', greenness_score: 40, greenness_index: 'low', is_highlighted: false },
+    ]);
+    // The stale entry must not consume one of the two slots.
+    expect(card.querySelectorAll('tr.forecast_row').length).toBe(2);
+    expect(card.content.innerHTML).toContain('20');
+    expect(card.content.innerHTML).toContain('30');
   });
 });
 

@@ -145,7 +145,16 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
       return;
     }
 
-    const forecastData = currentState.attributes.forecast;
+    // The feed is frozen, so entries age into the past. Drop anything that has
+    // already ended rather than presenting history as a forecast.
+    const forecastData = currentState.attributes.forecast.filter((entry) =>
+      this.hasNotEnded(entry)
+    );
+
+    if (forecastData.length === 0) {
+      this.content.innerHTML = retirementNotice;
+      return;
+    }
 
     const showDays = config.showDays || 7;
 
@@ -214,6 +223,12 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
 
     tables += "</tbody></table>";
     this.content.innerHTML = retirementNotice + tables;
+  }
+
+  hasNotEnded(entry) {
+    const end = new Date(entry.end).getTime();
+    // Keep anything we cannot date — absence of proof is not proof of staleness.
+    return Number.isNaN(end) || end >= Date.now();
   }
 
   renderRetirementNotice() {
