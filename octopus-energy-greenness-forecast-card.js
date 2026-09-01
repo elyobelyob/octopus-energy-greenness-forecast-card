@@ -44,16 +44,16 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
                 vertical-align: middle;
             }
             td.time_red {
-                border-bottom: 1px solid Tomato;
+                border-bottom: 1px solid #6E0B1E;
             }
             td.time_orange {
-                border-bottom: 1px solid orange;
+                border-bottom: 1px solid #BA0C2F;
             }
             td.time_green {
-                border-bottom: 1px solid ForestGreen;
+                border-bottom: 1px solid #FFB81C;
             }
             td.time_lightgreen {
-                border-bottom: 1px solid MediumSeaGreen;
+                border-bottom: 1px solid #C89B3C;
             }
             td.time_blue {
                 border-bottom: 1px solid #391CD9;
@@ -74,20 +74,22 @@ class OctopusEnergyGreennessForecastCard extends HTMLElement {
                 border-bottom-right-radius:15px;
             }
             td.red {
-                border: 2px solid Tomato;
-                background-color: Tomato;
+                border: 2px solid #6E0B1E;
+                background-color: #6E0B1E;
             }
             td.orange {
-                border: 2px solid orange;
-                background-color: orange;
+                border: 2px solid #BA0C2F;
+                background-color: #BA0C2F;
             }
             td.green {
-                border: 2px solid ForestGreen;
-                background-color: ForestGreen;
+                border: 2px solid #FFB81C;
+                background-color: #FFB81C;
+                color: #2B1A00;
             }
             td.lightgreen {
-                border: 2px solid MediumSeaGreen;
-                background-color: MediumSeaGreen;
+                border: 2px solid #C89B3C;
+                background-color: #C89B3C;
+                color: #2B1A00;
             }
             td.blue {
                 border: 2px solid #391CD9;
