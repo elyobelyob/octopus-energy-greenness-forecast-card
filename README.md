@@ -2,7 +2,7 @@
 >
 > Octopus dropped the Greener Days forecast from the start of August 2026, so no new data will appear. You can safely remove this card from your dashboard and uninstall it from HACS.
 >
-> Version 2.0.1 is the final release. This repository will be archived once people have had time to pick up that update. Everything below is kept as a record of how the card worked.
+> Version 2.0.2 is the final release, and this repository is now archived and read-only. Everything below is kept as a record of how the card worked.
 >
 > Because the forecast feed is frozen rather than empty, the card now hides entries that have already ended — so once the last of the old data expires you are left with this notice alone, rather than a table of history.
 
